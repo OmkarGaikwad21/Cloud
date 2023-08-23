@@ -56,8 +56,8 @@ job_list = [
     "sudo mv sssd.conf /etc/sssd/",
     "sudo chown root:root /etc/sssd/sssd.conf",
     "sudo chmod 600 /etc/sssd/sssd.conf",
-    "sudo systemctl enable sssd",
-    "sudo systemctl start sssd",
+    "sudo chkconfig sssd on",
+    "sudo service sssd start",
     "sudo authconfig --enablesssdauth --enablesssd --updateall",
     "sudo mv nscd.conf /etc/",
     
@@ -65,9 +65,7 @@ job_list = [
     "wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.tar.gz",
     "tar zxvf mysql-connector-java-5.1.48.tar.gz",
     "sudo mkdir -p /usr/share/java/",
-    "cd mysql-connector-java-5.1.48",
-    "sudo cp mysql-connector-java-5.1.48-bin.jar /usr/share/java/mysql-connector-java.jar",
-    "cd",
+    "sudo cp mysql-connector-java-5.1.48/mysql-connector-java-5.1.48-bin.jar /usr/share/java/mysql-connector-java.jar",
     
     
     "echo -e 'StrictHostKeyChecking no\nUserKnownHostsFile=/dev/null' >> ~/.ssh/config",
@@ -82,4 +80,3 @@ job_list = [
 # Execute each command
 for job in job_list:
     subprocess.call(job, shell=True)
-
