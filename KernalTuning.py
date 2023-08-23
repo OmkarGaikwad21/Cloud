@@ -3,14 +3,17 @@ import subprocess
 # List of commands to execute
 job_list = [
     "sudo yum update -y",
-
     "sudo yum install nano httpd zip unzip -y",
+    
+    
     "sudo yum install java-1.8.0-openjdk-devel -y",
     "sudo mkdir -p /usr/java",
     "cd /usr/java",
     "sudo wget https://mirrors.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz",
     "sudo tar xvfz jdk-8u202-linux-x64.tar.gz",
     "cd",
+    
+    
     "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/check-pre-req.sh",
     "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_iptables.sh",
     "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_ipv6.sh",
@@ -25,6 +28,8 @@ job_list = [
     "wget https://mycloudage.s3.ap-south-1.amazonaws.com/sssd.conf",
     "wget https://mycloudage.s3.ap-south-1.amazonaws.com/nscd.conf",
     "wget https://access.redhat.com/solutions/1489",
+    
+    
     "sudo sh disable_iptables.sh",
     "sudo sh disable_ipv6.sh",
     "sudo sh disable_selinux.sh",
@@ -36,11 +41,17 @@ job_list = [
     "sudo sh remove_tuned.sh",
     "sudo sh tune_kernel.sh",
     "sudo yum install bind-utils -y",
+    
+    
     "sudo service postfix stop",
     "sudo postfix set-permissions",
     "sudo service postfix start",
+    
+    
     "echo 'vm.swappiness=1' | sudo tee -a /etc/sysctl.conf",
     "sudo sysctl -p",
+    
+    
     "sudo yum install sssd -y",
     "sudo mv sssd.conf /etc/sssd/",
     "sudo chown root:root /etc/sssd/sssd.conf",
@@ -49,16 +60,22 @@ job_list = [
     "sudo systemctl start sssd",
     "sudo authconfig --enablesssdauth --enablesssd --updateall",
     "sudo mv nscd.conf /etc/",
+    
+    
     "wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.tar.gz",
     "tar zxvf mysql-connector-java-5.1.48.tar.gz",
     "sudo mkdir -p /usr/share/java/",
     "cd mysql-connector-java-5.1.48",
     "sudo cp mysql-connector-java-5.1.48-bin.jar /usr/share/java/mysql-connector-java.jar",
     "cd",
+    
+    
     "echo -e 'StrictHostKeyChecking no\nUserKnownHostsFile=/dev/null' >> ~/.ssh/config",
     "ssh-keygen -t rsa -P '' -f $HOME/.ssh/id_rsa",
     "cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys",
     "sudo chmod 600 ~/.ssh/config",
+    
+    
     "sudo sh check-pre-req.sh"
 ]
 
