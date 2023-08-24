@@ -1,3 +1,6 @@
+from subprocess import call
+
+job_list = [
 'sudo apt update',
 'sudo apt install apache2 -y',
 
