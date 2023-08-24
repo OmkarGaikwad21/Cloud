@@ -1,23 +1,25 @@
 import subprocess
-import sys
 
 # Configure Cloudera Manager repo
-with open('/etc/yum.repos.d/cloudera-manager.repo', 'w') as f:
-  f.write("""
+repo_content = """
 [cloudera-manager]
 name=Cloudera Manager
 baseurl=http://your_repo_privateIP/cloudera-repos/cm7/cm7.4.4/
 gpgkey =http://your_repo_privateIP/cloudera-repos/cm7/cm7.4.4/RPM-GPG-KEY-cloudera
 gpgcheck = 0
-""")
+"""
+
+# Save repo configuration
+with open('/etc/yum.repos.d/cloudera-manager.repo', 'w') as f:
+    f.write(repo_content)
 
 # Install Cloudera Manager
 subprocess.run("sudo yum clean all", shell=True, check=True)
 subprocess.run("sudo yum makecache", shell=True, check=True)
 subprocess.run("sudo yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server -y", shell=True, check=True)
 
-# Prepare database 
-db_host = "your_db_host_privateIP_of_DNS" 
+# Prepare database
+db_host = "your_db_host_privateIP_of_DNS"
 db_name = "scm"
 db_user = "scm"
 db_password = "Omkar@123"
