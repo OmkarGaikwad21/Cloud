@@ -1,10 +1,11 @@
 import subprocess
 
+
 # Reset root password 
-mysql_cmd = ["mysqladmin", "-u", "root", "password", "Omkar@123"]
+mysql_cmd = ["mysqladmin", "-u", "root", "--skip-grant-tables", "password", "Omkar@123"]
 subprocess.run(mysql_cmd, check=True)
 
-# Connect to MySQL and run SQL  
+# Connect to MySQL and run SQL
 mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123"]
 
 # Create databases
@@ -24,4 +25,4 @@ sql = """CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;"""
 subprocess.Popen(mysql_cmd, stdin=subprocess.PIPE).communicate(sql.encode())
 
-print("MySQL configuration completed!")
+print("MySQL configured!")
