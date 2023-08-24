@@ -3,7 +3,6 @@ import subprocess
 mysql_password = "Omkar@123"
 
 mysql_commands = """
-STATUS;
 SHOW DATABASES;
 CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 CREATE USER 'scm'@'%' IDENTIFIED BY 'Omkar@123';
