@@ -29,6 +29,6 @@ subprocess.run(f"sudo /opt/cloudera/cm/schema/scm_prepare_database.sh mysql -h {
 # Start Cloudera Manager
 subprocess.run("sudo systemctl start cloudera-scm-server", shell=True, check=True)
 subprocess.run("sudo systemctl enable cloudera-scm-server", shell=True, check=True)
-subprocess.run("sudo tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log", shell=True)
+
 
 print("Cloudera Manager installed and configured!")
