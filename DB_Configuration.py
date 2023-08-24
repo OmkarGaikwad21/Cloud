@@ -20,8 +20,7 @@ sql_commands = [
 ]
 sql_commands_str = "\n".join(sql_commands)
 secure_install_cmd = (
-    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n{sql_commands_str}' "
-    "| sudo mysql_secure_installation"
+    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n'{'\\n'.join(sql_commands)} | sudo mysql_secure_installation"
 )
 subprocess.run(secure_install_cmd, shell=True, check=True)
 
