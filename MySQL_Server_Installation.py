@@ -3,8 +3,12 @@ import subprocess
 # Step 1: Download MySQL repository
 subprocess.run(["wget", "https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm"], check=True)
 
-# Step 2: Install MySQL repository
-subprocess.run(["sudo", "rpm", "-ivh", "mysql80-community-release-el7-9.noarch.rpm"], check=True)
+# Step 2: Install MySQL repository (only if the older version is not installed)
+try:
+    subprocess.run(["sudo", "rpm", "-ivh", "mysql80-community-release-el7-9.noarch.rpm"], check=True)
+except subprocess.CalledProcessError as e:
+    if "is already installed" not in e.stderr:
+        raise
 
 # Step 3: Update packages
 subprocess.run(["sudo", "yum", "update", "-y"], check=True)
