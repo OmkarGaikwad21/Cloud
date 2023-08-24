@@ -1,20 +1,19 @@
 import subprocess
 
-# Set the new root password
-mysql_reset_cmd = ["mysql", "-u", "root", "--execute", "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Omkar@123';"]
-subprocess.run(mysql_reset_cmd, check=True)
+# Reset root password
+subprocess.run(["mysqladmin", "-u", "root", "password", "Omkar@123"], check=True)
 
 # Connect to MySQL and run SQL commands
 mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123", "--execute"]
-
-# Create databases and users
 databases = ["scm", "hive", "hue", "rman", "navs", "navms", "oozie", "actmo", "sentry", "ranger"]
+
 for db in databases:
     sql_commands = [
         f"CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;",
         f"CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';",
         f"GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';"
     ]
+
     for sql in sql_commands:
         subprocess.run(mysql_cmd + [sql], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
