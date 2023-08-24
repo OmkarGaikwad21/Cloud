@@ -19,7 +19,7 @@ subprocess.run("sudo yum install mysql-server -y", shell=True, check=True)
 subprocess.run("sudo systemctl start mysqld", shell=True, check=True)
 
 # Get temporary password
-result = subprocess.run("sudo grep 'temporary password' /var/log/mysqld.log", shell=True, capture_output=True, check=True)
+result = subprocess.run("sudo grep 'temporary password' /var/log/mysqld.log", shell=True, stdout=subprocess.PIPE, check=True)
 temp_password = result.stdout.decode('utf-8').split()[3]
 
 # Secure MySQL installation
