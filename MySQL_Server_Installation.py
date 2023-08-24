@@ -1,5 +1,6 @@
 import subprocess
 import re
+import os
 
 # Download MySQL repository RPM
 subprocess.run(["wget", "https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm"], check=True)
@@ -32,9 +33,19 @@ except AttributeError:
     exit(1)
 
 # Secure MySQL installation
-secure_install_cmd = (
-    f"sudo mysql_secure_installation <<EOF\n{temp_password}\nY\nOmkar@123\nOmkar@123\nn\nY\nY\nn\nY\nEOF"
-)
-subprocess.run(secure_install_cmd, shell=True, check=True, input=subprocess.PIPE, text=True)
+secure_install_script = f"""
+Y
+{temp_password}
+Omkar@123
+Omkar@123
+n
+Y
+Y
+n
+Y
+"""
+
+secure_install_cmd = "sudo mysql_secure_installation"
+subprocess.run(["echo", secure_install_script, "|", secure_install_cmd], shell=True, check=True, executable="/bin/bash")
 
 print("MySQL setup completed!")
