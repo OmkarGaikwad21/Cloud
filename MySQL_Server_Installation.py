@@ -33,9 +33,8 @@ except AttributeError:
 
 # Secure MySQL installation
 secure_install_cmd = (
-    "echo -e 'Y\\n" + temp_password + "\\nOmkar@123\\nOmkar@123\\nn\\nY\\nY\\nn\\nY' | "
-    "sudo mysql_secure_installation"
+    f"sudo mysql_secure_installation <<EOF\n{temp_password}\nY\nOmkar@123\nOmkar@123\nn\nY\nY\nn\nY\nEOF"
 )
-subprocess.run(secure_install_cmd, shell=True, check=True)
+subprocess.run(secure_install_cmd, shell=True, check=True, input=subprocess.PIPE, text=True)
 
 print("MySQL setup completed!")
