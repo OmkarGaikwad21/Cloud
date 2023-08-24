@@ -1,20 +1,13 @@
 import subprocess
 
-# Check if the MySQL repository package is already installed
-check_installed_cmd = ["rpm", "-q", "mysql80-community-release-el7-9.noarch"]
+# Install MySQL repository package
+install_repo_cmd = ["sudo", "rpm", "-ivh", "mysql80-community-release-el7-9.noarch.rpm"]
 try:
-    subprocess.run(check_installed_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print("MySQL repository package is already installed.")
-except subprocess.CalledProcessError:
-    print("MySQL repository package is not installed. Proceeding with installation...")
-    # Install MySQL repository package
-    install_cmd = ["sudo", "rpm", "-ivh", "mysql80-community-release-el7-9.noarch.rpm"]
-    try:
-        subprocess.run(install_cmd, check=True)
-        print("MySQL repository package installed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error installing MySQL repository package: {e}")
-        exit(1)
+    subprocess.run(install_repo_cmd, check=True)
+    print("MySQL repository package installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error installing MySQL repository package: {e}")
+    exit(1)
 
 # Update and install MySQL Server
 update_cmd = ["sudo", "yum", "update", "-y"]
@@ -49,13 +42,17 @@ except subprocess.CalledProcessError as e:
 secure_install_cmd = [
     "sudo", "mysql_secure_installation",
     "-p" + temp_password,
-    "-e", "Omkar@123",
-    "-e", "Omkar@123",
-    "-e", "n",
-    "-e", "Y", "-e", "Y", "-e", "n", "-e", "Y"
 ]
 try:
-    subprocess.run(secure_install_cmd, check=True)
+    subprocess.run(secure_install_cmd, input="\n".join([
+        "Omkar@123",
+        "Omkar@123",
+        "n",  # Set root password? [Y/n]
+        "Y",  # Remove anonymous users? [Y/n]
+        "Y",  # Disallow root login remotely? [Y/n]
+        "n",  # Remove test database and access it? [Y/n]
+        "Y",  # Reload privilege tables now? [Y/n]
+    ]) + "\n", text=True, check=True)
     print("MySQL secure installation completed successfully!")
 except subprocess.CalledProcessError as e:
     print(f"Error running secure installation: {e}")
