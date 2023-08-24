@@ -1,7 +1,11 @@
 import subprocess
 
-# Reset root password
-subprocess.run(["mysqladmin", "-u", "root", "password", "Omkar@123"], check=True)
+# Connect to MySQL and reset root password
+mysql_reset_cmd = [
+    "mysql", "-u", "root", "-pOmkar@123", "--execute", 
+    "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Omkar@123';"
+]
+subprocess.run(mysql_reset_cmd, check=True)
 
 # Connect to MySQL and run SQL commands
 mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123", "--execute"]
