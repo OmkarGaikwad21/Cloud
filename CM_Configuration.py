@@ -6,8 +6,8 @@ with open('/etc/yum.repos.d/cloudera-manager.repo', 'w') as f:
   f.write("""
 [cloudera-manager]
 name=Cloudera Manager
-baseurl=http://your_repo_privateIP/cm/7.x.x/ 
-gpgkey =http://your_repo_privateIP/cm/7.x.x/RPM-GPG-KEY-cloudera
+baseurl=http://your_repo_privateIP/cloudera-repos/cm7/cm7.4.4/
+gpgkey =http://your_repo_privateIP/cloudera-repos/cm7/cm7.4.4/RPM-GPG-KEY-cloudera
 gpgcheck = 0
 """)
 
