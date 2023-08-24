@@ -52,15 +52,11 @@ SHOW DATABASES;
 EXIT;
 """
 
-# Run MySQL commands
-mysql_process = subprocess.Popen(
-    ["mysql", "-u", "root", "-p" + mysql_password],
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True
-)
+# Save the MySQL commands to a file
+with open("mysql_commands.sql", "w") as file:
+    file.write(mysql_commands)
 
-stdout, stderr = mysql_process.communicate(input=mysql_commands)
+# Run MySQL commands
+subprocess.run(["mysql", "-u", "root", "-p" + mysql_password, "-e", "source mysql_commands.sql"])
 
 print("MySQL commands executed successfully.")
