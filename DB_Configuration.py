@@ -8,26 +8,37 @@ subprocess.run("sudo yum install mysql-server -y", shell=True, check=True)
 subprocess.run("sudo systemctl start mysqld", shell=True, check=True)
 
 # Get temporary password
-result = subprocess.run("sudo grep 'temporary password' /var/log/mysqld.log", shell=True, capture_output=True, check=True)
+result = subprocess.run("sudo grep 'temporary password' /var/log/mysqld.log", shell=True, stdout=subprocess.PIPE, check=True)
 temp_password = result.stdout.decode('utf-8').split()[3]
 
 # Secure MySQL installation
-sql_commands = [f"{temp_password}", "Omkar@123", "Omkar@123", "n", "Y", "Y", "n", "Y"]
+sql_commands = [
+    f"{temp_password}",
+    "Omkar@123", "Omkar@123", "n", "Y", "Y", "n", "Y"
+]
 subprocess.run("echo '{}' | sudo mysql_secure_installation".format('\\n'.join(sql_commands)), shell=True, check=True)
 
 # Create databases and users
-databases = ["scm", "hive", "hue", "rman", "navs", "navms", "oozie", "actmo", 
-             "sentry", "ranger"]
+databases_and_users = [
+    ("scm", "Omkar@123"),
+    ("hive", "Omkar@123"),
+    ("hue", "Omkar@123"),
+    ("rman", "Omkar@123"),
+    ("navs", "Omkar@123"),
+    ("navms", "Omkar@123"),
+    ("oozie", "Omkar@123"),
+    ("actmo", "Omkar@123"),
+    ("sentry", "Omkar@123"),
+    ("ranger", "Omkar@123"),
+    ("temp", "Omkar@123")
+]
 
-for db in databases:
+for db, password in databases_and_users:
     sql = f"""
         CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;
-        CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';
+        CREATE USER '{db}'@'%' IDENTIFIED BY '{password}';
         GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';
     """
     subprocess.run(f"echo '{sql}' | mysql -u root -pOmkar@123", shell=True, check=True)
 
-# Create temp user  
-subprocess.run("echo 'CREATE USER temp@'%' IDENTIFIED BY 'Omkar@123'; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;' | mysql -u root -pOmkar@123", shell=True, check=True)
-
-print("MySQL setup completed!")
+print("MySQL setup and configuration completed!")
