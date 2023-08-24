@@ -1,4 +1,5 @@
 import subprocess
+import re
 
 # Download MySQL repository RPM
 subprocess.run(["wget", "https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm"], check=True)
@@ -17,12 +18,12 @@ subprocess.run(["sudo", "systemctl", "start", "mysqld"], check=True)
 subprocess.run(["sudo", "systemctl", "status", "mysqld"], check=True)
 
 # Get temporary password
-result = subprocess.run(["sudo", "grep", "'temporary password'", "/var/log/mysqld.log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-temp_password = result.stdout.split()[-1]
+result = subprocess.run(["sudo", "grep", "'temporary password'", "/var/log/mysqld.log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=True)
+temp_password = re.search(r": (.+)$", result.stdout, re.MULTILINE).group(1)
 
 # Secure MySQL installation
 secure_install_cmd = (
-    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\nn\\nY\\nY\\nn\\nY' | "
+    f"echo -e '{temp_password}\\nOmkar@123\\nOmkar@123\\nn\\nY\\nY\\nn\\nY' | "
     f"sudo mysql_secure_installation"
 )
 subprocess.run(secure_install_cmd, shell=True, check=True)
