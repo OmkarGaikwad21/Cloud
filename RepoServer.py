@@ -33,4 +33,4 @@ subprocess.run(["sudo", "wget", "https://archive.cloudera.com/cdh7/7.1.7/parcels
 # Start Apache service
 subprocess.run(["sudo", "systemctl", "start", "apache2"])
 
-print("Cloudera setup completed.")
+print("Repo setup completed.")
