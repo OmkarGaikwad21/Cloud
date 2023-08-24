@@ -1,8 +1,20 @@
 import subprocess
 
-# Reset root password with --skip-grant-tables
-mysql_cmd = ["mysqladmin", "-u", "root", "--skip-grant-tables", "password", "Omkar@123"]
+# Stop mysql service 
+subprocess.run("sudo systemctl stop mysqld", shell=True)
+
+# Start mysql with --skip-grant-tables
+subprocess.run("sudo mysqld_safe --skip-grant-tables &", shell=True) 
+
+# Reset root password
+mysql_cmd = ["mysqladmin", "-u", "root", "password", "Omkar@123"]
 subprocess.run(mysql_cmd, check=True)
+
+# Stop mysql
+subprocess.run("sudo systemctl stop mysqld", shell=True)
+
+# Start mysql normally
+subprocess.run("sudo systemctl start mysqld", shell=True)
 
 # Connect to MySQL and run SQL 
 mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123"]
