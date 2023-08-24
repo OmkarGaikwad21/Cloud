@@ -19,7 +19,10 @@ sql_commands = [
     "Y",  # Reload privilege tables
 ]
 sql_commands_str = "\n".join(sql_commands)
-secure_install_cmd = f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n{sql_commands_str}' | sudo mysql_secure_installation"
+secure_install_cmd = (
+    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n{sql_commands_str}' "
+    "| sudo mysql_secure_installation"
+)
 subprocess.run(secure_install_cmd, shell=True, check=True)
 
 # Create databases and users
