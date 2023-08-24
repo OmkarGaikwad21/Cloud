@@ -1,23 +1,26 @@
-import subprocess
+import os
 
-# Install MySQL repository
-subprocess.run(["wget", "https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm"], check=True)
-subprocess.run(["sudo", "rpm", "-ivh", "mysql80-community-release-el7-9.noarch.rpm"], check=True)
+# Download the MySQL repository
+os.system('wget https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm')
 
-# Update and install MySQL Server
-subprocess.run(["sudo", "yum", "update", "-y"], check=True)
-subprocess.run(["sudo", "yum", "install", "mysql-server", "--nogpgcheck", "-y"], check=True)
-subprocess.run(["sudo", "systemctl", "start", "mysqld"], check=True)
+# Install the repository
+os.system('sudo rpm -ivh mysql80-community-release-el7-9.noarch.rpm')
 
-# Get temporary password
-result = subprocess.run(["sudo", "grep", "'temporary password'", "/var/log/mysqld.log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-temp_password = result.stdout.split()[-1]
+# Update the system
+os.system('sudo yum update -y')
 
-# Secure MySQL installation
-secure_install_cmd = (
-    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\nn\\nY\\nY\\nn\\nY' | "
-    f"sudo mysql_secure_installation"
-)
-subprocess.run(secure_install_cmd, shell=True, check=True)
+# Install MySQL Server
+os.system('sudo yum install mysql-server --nogpgcheck -y')
 
-print("MySQL setup completed!")
+# Start the MySQL service
+os.system('sudo systemctl start mysqld')
+
+# Check the status of the MySQL service
+os.system('sudo systemctl status mysqld')
+
+# Get the temporary password from the log file
+with os.popen("sudo grep 'temporary password' /var/log/mysqld.log") as temp_pass:
+    temp_password = temp_pass.read().split()[-1]
+
+# Run the secure installation script
+os.system(f"sudo mysql_secure_installation <<EOF\n{temp_password}\nOmkar@123\nOmkar@123\nn\nY\nY\nn\nY\nEOF")
