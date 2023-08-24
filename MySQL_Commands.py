@@ -49,7 +49,6 @@ CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;
 
 SHOW DATABASES;
-EXIT;
 """
 
 # Save the MySQL commands to a file
@@ -60,3 +59,4 @@ with open("mysql_commands.sql", "w") as file:
 subprocess.run(["mysql", "-u", "root", "-p" + mysql_password, "-e", "source mysql_commands.sql"])
 
 print("MySQL commands executed successfully.")
+
