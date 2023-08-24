@@ -32,17 +32,25 @@ except AttributeError:
     print("Error: Temporary password not found in the log.")
     exit(1)
 
+# Reset MySQL root password
+reset_password_script = f"""
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Omkar@123';
+FLUSH PRIVILEGES;
+"""
+
+reset_password_cmd = "sudo mysql"
+subprocess.run(["echo", reset_password_script, "|", reset_password_cmd], shell=True, check=True, executable="/bin/bash")
+
+print("MySQL root password reset completed!")
+
 # Secure MySQL installation
 secure_install_script = f"""
 Y
-{temp_password}
-Omkar@123
-Omkar@123
 n
-Y
-Y
 n
-Y
+n
+n
+n
 """
 
 secure_install_cmd = "sudo mysql_secure_installation"
