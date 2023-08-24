@@ -1,39 +1,26 @@
 import subprocess
 
-# Stop mysql service 
-subprocess.run("sudo systemctl stop mysqld", shell=True)
+# Set the new root password
+mysql_reset_cmd = ["mysql", "-u", "root", "--execute", "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Omkar@123';"]
+subprocess.run(mysql_reset_cmd, check=True)
 
-# Start mysql with --skip-grant-tables
-subprocess.run("sudo mysqld_safe --skip-grant-tables &", shell=True) 
+# Connect to MySQL and run SQL commands
+mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123", "--execute"]
 
-# Reset root password
-mysql_cmd = ["mysqladmin", "-u", "root", "password", "Omkar@123"]
-subprocess.run(mysql_cmd, check=True)
-
-# Stop mysql
-subprocess.run("sudo systemctl stop mysqld", shell=True)
-
-# Start mysql normally
-subprocess.run("sudo systemctl start mysqld", shell=True)
-
-# Connect to MySQL and run SQL 
-mysql_cmd = ["mysql", "-u", "root", "-pOmkar@123"]
-
-# Create databases
+# Create databases and users
 databases = ["scm", "hive", "hue", "rman", "navs", "navms", "oozie", "actmo", "sentry", "ranger"]
 for db in databases:
-  sql = f"CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;"
-  subprocess.Popen(mysql_cmd, stdin=subprocess.PIPE).communicate(sql.encode())  
-
-  sql = f"CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';" 
-  subprocess.Popen(mysql_cmd, stdin=subprocess.PIPE).communicate(sql.encode())
-
-  sql = f"GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';"
-  subprocess.Popen(mysql_cmd, stdin=subprocess.PIPE).communicate(sql.encode())
+    sql_commands = [
+        f"CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;",
+        f"CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';",
+        f"GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';"
+    ]
+    for sql in sql_commands:
+        subprocess.run(mysql_cmd + [sql], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 # Create temp user
-sql = """CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';  
+temp_user_sql = """CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;"""
-subprocess.Popen(mysql_cmd, stdin=subprocess.PIPE).communicate(sql.encode())
+subprocess.run(mysql_cmd + [temp_user_sql], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 print("MySQL configured successfully!")
