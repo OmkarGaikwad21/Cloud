@@ -18,26 +18,29 @@ sql_commands = [
     "n",  # Remove test database and access it
     "Y",  # Reload privilege tables
 ]
-sql_commands_str = "\n".join(sql_commands)
+sql_commands_str = "\\n".join(sql_commands)
 
 secure_install_cmd = (
-    "echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n' '{sql_commands_str}' | sudo mysql_secure_installation"
+    f"echo -e 'Omkar@123\\nOmkar@123\\n{temp_password}\\n{sql_commands_str}' | sudo mysql_secure_installation"
 )
-subprocess.run(secure_install_cmd, shell=True, check=True, env={"temp_password": temp_password, "sql_commands_str": sql_commands_str})
+subprocess.run(secure_install_cmd, shell=True, check=True, env={"temp_password": temp_password})
 
 # Create databases and users
-databases = ["scm", "hive", "hue", "rman", "navs", "navms", "oozie", "actmo", 
-             "sentry", "ranger"]
+databases = ["scm", "hive", "hue", "rman", "navs", "navms", "oozie", "actmo", "sentry", "ranger"]
 
 for db in databases:
-    sql = f"""
-        CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;
-        CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';
-        GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';
-    """
+    sql = f"CREATE DATABASE {db} DEFAULT CHARACTER SET utf8;"
+    subprocess.run(f"echo '{sql}' | mysql -u root -pOmkar@123", shell=True, check=True)
+    sql = f"CREATE USER '{db}'@'%' IDENTIFIED BY 'Omkar@123';"
+    subprocess.run(f"echo '{sql}' | mysql -u root -pOmkar@123", shell=True, check=True)
+    sql = f"GRANT ALL PRIVILEGES ON {db}.* TO '{db}'@'%';"
     subprocess.run(f"echo '{sql}' | mysql -u root -pOmkar@123", shell=True, check=True)
 
-# Create temp user  
-subprocess.run("echo 'CREATE USER temp@'%' IDENTIFIED BY 'Omkar@123'; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;' | mysql -u root -pOmkar@123", shell=True, check=True)
+# Create temp user
+temp_user_sql = """
+    CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';
+    GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;
+"""
+subprocess.run(f"echo '{temp_user_sql}' | mysql -u root -pOmkar@123", shell=True, check=True)
 
 print("MySQL setup completed!")
