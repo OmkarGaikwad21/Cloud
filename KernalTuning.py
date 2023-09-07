@@ -6,12 +6,10 @@ job_list = [
     "sudo yum install nano httpd zip unzip -y",
     
     
-    "sudo yum install java-1.8.0-openjdk-devel -y",
-    "sudo mkdir -p /usr/java",
-    "cd /usr/java",
-    "sudo wget https://mirrors.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz",
-    "sudo tar xvfz jdk-8u202-linux-x64.tar.gz",
-    "cd",
+   
+    "sudo wget https://bitbucket.org/omkargaikwad21/cdp-cloud-files/raw/master/jdk-8u181-linux-x64.rpm",
+    "sudo rpm -ivh jdk-8u181-linux-x64.rpm",
+    "java -version",
     
     
     "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/check-pre-req.sh",
@@ -27,7 +25,7 @@ job_list = [
     "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/tune_kernel.sh",
     "wget https://mycloudage.s3.ap-south-1.amazonaws.com/sssd.conf",
     "wget https://mycloudage.s3.ap-south-1.amazonaws.com/nscd.conf",
-    "wget https://access.redhat.com/solutions/1489",
+   
     
     
     "sudo sh disable_iptables.sh",
