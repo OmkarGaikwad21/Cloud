@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 
 # Specify the full path to the AWS CLI executable
 aws_cli_path = "/usr/local/bin/aws"  # Replace with the correct path if necessary
