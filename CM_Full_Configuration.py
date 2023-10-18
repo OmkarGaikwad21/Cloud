@@ -24,10 +24,10 @@ subprocess.run([f"{aws_cli_path}", "configure", "set", "default.region", os.envi
 subprocess.run([f"{aws_cli_path}", "configure", "set", "default.output", os.environ['AWS_DEFAULT_OUTPUT']], shell=False, check=True)
 
 # Get the private IP of the "repo" instance
-repo_private_ip = subprocess.check_output([aws_cli_path, "ec2", "describe-instances", "--filters", "Name=tag:Name,Values=Repo", "--query", "Reservations[0].Instances[0].PrivateIpAddress", "--output", "text"], shell=False).strip()
+repo_private_ip = subprocess.check_output([aws_cli_path, "ec2", "describe-instances", "--filters", "Name=tag:Name,Values=Repo||repo||REPO||webserver||web server||Web Server||WEBSERVER||WEB SERVER", "--query", "Reservations[0].Instances[0].PrivateIpAddress", "--output", "text"], shell=False).strip()
 
 # Get the private DNS of the "database" instance
-db_private_dns = subprocess.check_output([aws_cli_path, "ec2", "describe-instances", "--filters", "Name=tag:Name,Values=Database", "--query", "Reservations[0].Instances[0].PrivateDnsName", "--output", "text"], shell=False).strip()
+db_private_dns = subprocess.check_output([aws_cli_path, "ec2", "describe-instances", "--filters", "Name=tag:Name,Values=Database||database||DATABASE||DB||db||Db||dB", "--query", "Reservations[0].Instances[0].PrivateDnsName", "--output", "text"], shell=False).strip()
 
 # Correct the formatting of the private IP
 repo_private_ip = repo_private_ip.decode().strip("b")
