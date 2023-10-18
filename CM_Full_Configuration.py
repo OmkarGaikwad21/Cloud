@@ -64,5 +64,9 @@ subprocess.run(["sudo", "systemctl", "enable", "cloudera-scm-server"], shell=Fal
 
 print("Cloudera Manager installed and configured!")
 
+# Add a fixed 30-second delay
+print("Delaying for 30 seconds before tailing the Cloudera Manager log.")
+time.sleep(30)
+
 # Tail the Cloudera Manager server log
 subprocess.run(["sudo", "tail", "-f", "/var/log/cloudera-scm-server/cloudera-scm-server.log"])
