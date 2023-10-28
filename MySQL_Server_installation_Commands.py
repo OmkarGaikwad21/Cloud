@@ -108,6 +108,7 @@ GRANT ALL PRIVILEGES ON ranger.* TO 'ranger'@'%';
 CREATE USER 'temp'@'%' IDENTIFIED BY 'Omkar@123';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION;
 
+alter user 'hue'@'%' IDENTIFIED WITH mysql_native_password BY 'Omkar@123';
 SHOW DATABASES;
 """
 
@@ -117,5 +118,7 @@ with open("mysql_commands.sql", "w") as file:
 
 # Run MySQL commands
 subprocess.run(["mysql", "-u", "root", "-p" + mysql_password], stdin=open('mysql_commands.sql', 'r'))
+
+ 
 
 print("MySQL commands executed successfully.")
