@@ -1,113 +1,91 @@
-import subprocess 
-import getpass
+import subprocess
 
-# Install expect
-subprocess.call(["sudo", "yum", "install", "-y", "expect"])
+def run_command(command, error_msg):
+    try:
+        subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {error_msg}")
+        print(e.output.decode('utf-8'))
+        exit(1)
 
-# Download MySQL GPG key 
-subprocess.call(["wget", "https://repo.mysql.com/RPM-GPG-KEY-mysql"])
-
-# Import GPG key
-subprocess.call(["sudo", "rpm", "--import", "RPM-GPG-KEY-mysql"])  
-
-# Download MySQL repository RPM
-subprocess.call(["wget", "https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm"])
-
-# Install MySQL repository 
-subprocess.call(["sudo", "rpm", "-ivh", "mysql80-community-release-el7-3.noarch.rpm"])
-
-# Update repositories
-subprocess.call(["sudo", "yum", "update", "-y"])  
+# Install expect and MySQL repository
+run_command("sudo yum install -y expect", "Failed to install 'expect'.")
+run_command("wget https://dev.mysql.com/get/mysql80-community-release-el7-9.noarch.rpm", "Failed to download MySQL repository RPM.")
+run_command("sudo rpm -ivh mysql80-community-release-el7-9.noarch.rpm", "Failed to install MySQL repository.")
+run_command("sudo yum update -y", "Failed to update repositories.")
 
 # Install MySQL server
-subprocess.call(["sudo", "yum", "install", "mysql-server", "-y"])
+run_command("sudo yum install mysql-server --nogpgcheck -y", "Failed to install MySQL server.")
 
-# Enable MySQL service
-subprocess.call(["sudo", "systemctl", "enable", "mysqld"])
-  
-# Start MySQL service
-subprocess.call(["sudo", "systemctl", "start", "mysqld"])
+# Start MySQL service and get temporary password
+run_command("sudo service mysqld start", "Failed to start MySQL service.")
+run_command("sudo service mysqld restart", "Failed to restart MySQL service.")
+temp_password = subprocess.check_output(["sudo", "grep", "temporary password", "/var/log/mysqld.log"]).decode('utf-8').split(': ')[-1].strip()
 
-# Prompt for MySQL root password
-mysql_password = getpass.getpass("Enter MySQL root password: ")
+print("Temporary password:", temp_password)
 
-# Get temporary password
-temp_pw = subprocess.check_output(["sudo", "grep", "'temporary password'", "/var/log/mysqld.log"]).decode().split()[-1]
-print("Temporary password:", temp_pw)  
+# Create an expect script
+expect_script = f"""spawn sudo mysql_secure_installation
 
-# Create expect script to secure installation
-exp_script = f"""
-spawn sudo mysql_secure_installation
-expect "Enter password for user root:" 
-send "{temp_pw}\r"
-expect "New password:"
-send "{mysql_password}\r"
-expect "Re-enter new password:"  
-send "{mysql_password}\r"
-expect "Change the password for root ?"
-send "n\r"
-expect "Remove anonymous users?"
-send "Y\r"
-expect "Disallow root login remotely?"
-send "Y\r"
-expect "Remove test database and access to it?"
-send "Y\r"
-expect "Reload privilege tables now?"
-send "Y\r"  
-expect eof
-"""
+expect "*Enter password for user root:*"
+send "{temp_password}\\r"
 
-with open("secure_mysql.exp", "w") as f:
-    f.write(exp_script)
+expect "*New password:*"
+send "Omkar@123\\r"
 
-subprocess.call(["expect", "./secure_mysql.exp"]) 
+expect "*Re-enter new password:*"
+send "Omkar@123\\r"
+
+expect "*Change the password for root ? ((Press y|Y for Yes, any other key for No) :*"
+send "n\\r"
+
+expect "*Remove anonymous users? ((Press y|Y for Yes, any other key for No) :*"
+send "Y\\r"
+
+expect "*Disallow root login remotely? ((Press y|Y for Yes, any other key for No) :*"
+send "Y\\r"
+
+expect "*Remove test database and access to it? ((Press y|Y for Yes, any other key for No) :*"
+send "n\\r"
+
+expect "*Reload privilege tables now? ((Press y|Y for Yes, any other key for No) :*"
+send "Y\\r"
+
+expect eof"""
+
+with open("secure_mysql.exp", 'w') as f:
+    f.write(expect_script)
+
+# Run expect script
+run_command("expect ./secure_mysql.exp", "Failed to run the expect script.")
+
+# Configure 'hue' user with native authentication
+run_command("mysql -u root -p{temp_password} -e \"ALTER USER 'hue'@'%' IDENTIFIED WITH mysql_native_password BY 'Omkar@123';\"", "Failed to configure 'hue' user.")
 
 # Create databases and users
-db_commands = f"""  
-CREATE DATABASE scm CHARACTER SET utf8 COLLATE utf8_general_ci;
-CREATE USER 'scm'@'%' IDENTIFIED BY '{mysql_password}'; 
-GRANT ALL ON scm.* TO 'scm'@'%';
+mysql_commands = """
+SHOW DATABASES;
+CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE USER 'scm'@'%' IDENTIFIED BY 'Omkar@123';
+GRANT ALL PRIVILEGES ON scm.* TO 'scm'@'%';
 
-CREATE DATABASE hive CHARACTER SET utf8;
-CREATE USER 'hive'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON hive.* TO 'hive'@'%';
+CREATE DATABASE hive DEFAULT CHARACTER SET utf8;
+CREATE USER 'hive'@'%' IDENTIFIED BY 'Omkar@123'; 
+GRANT ALL PRIVILEGES ON hive.* TO 'hive'@'%';
 
-CREATE DATABASE hue CHARACTER SET utf8;  
-CREATE USER 'hue'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON hue.* TO 'hue'@'%';
+CREATE DATABASE hue DEFAULT CHARACTER SET utf8;
+CREATE USER 'hue'@'%' IDENTIFIED BY 'Omkar@123';
+GRANT ALL PRIVILEGES ON hue.* TO 'hue'@'%';
 
-CREATE DATABASE rman CHARACTER SET utf8;
-CREATE USER 'rman'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON rman.* TO 'rman'@'%';
+# Add more database and user creation commands here...
 
-CREATE DATABASE navs CHARACTER SET utf8; 
-CREATE USER 'navs'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON navs.* TO 'navs'@'%';
-
-CREATE DATABASE navms CHARACTER SET utf8;  
-CREATE USER 'navms'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON navms.* TO 'navms'@'%';
-
-CREATE DATABASE oozie CHARACTER SET utf8;
-CREATE USER 'oozie'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON oozie.* TO 'oozie'@'%';
-
-CREATE DATABASE actmo CHARACTER SET utf8; 
-CREATE USER 'actmo'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON actmo.* TO 'actmo'@'%';  
-
-CREATE DATABASE sentry CHARACTER SET utf8;
-CREATE USER 'sentry'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON sentry.* TO 'sentry'@'%';
-
-CREATE DATABASE ranger CHARACTER SET utf8;
-CREATE USER 'ranger'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT ALL ON ranger.* TO 'ranger'@'%';
-
-CREATE USER 'temp'@'%' IDENTIFIED BY '{mysql_password}';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER ON *.* TO 'temp'@'%' WITH GRANT OPTION; 
+SHOW DATABASES;
 """
 
-subprocess.run(["mysql", "-u", "root", "-p" + mysql_password], input=db_commands, encoding='utf8')
+with open("mysql_commands.sql", "w") as file:
+    file.write(mysql_commands)
 
-print("MySQL installed, secured, and databases/users created.")
+# Run MySQL commands
+run_command(f"mysql -u root -pOmkar@123 < mysql_commands.sql", "Failed to execute MySQL commands.")
+
+print("MySQL commands executed successfully.")
