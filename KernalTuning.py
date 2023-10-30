@@ -4,7 +4,7 @@ import subprocess
 job_list = [
     "sudo yum update -y",
     "sudo yum install nano httpd zip unzip -y",
-    
+    "sudo yum install krb5-workstation krb5-libs -y",
     
    
     "sudo wget https://bitbucket.org/omkargaikwad21/cdp-cloud-files/raw/master/jdk-8u181-linux-x64.rpm",
@@ -73,6 +73,8 @@ job_list = [
     
     
     "sudo sh check-pre-req.sh"
+
+    
 ]
 
 # Execute each command
