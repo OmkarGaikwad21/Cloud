@@ -12,19 +12,19 @@ job_list = [
     "java -version",
     
     
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/check-pre-req.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_iptables.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_ipv6.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_selinux.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/disable_thp.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/install_lzo.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/install_nscd.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/install_ntp.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/install_tools.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/remove_tuned.sh",
-    "wget https://s3.amazonaws.com/cloud-age/MIT_kerberos/prerequisite/tune_kernel.sh",
-    "wget https://mycloudage.s3.ap-south-1.amazonaws.com/sssd.conf",
-    "wget https://mycloudage.s3.ap-south-1.amazonaws.com/nscd.conf",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/check-pre-req.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/disable_iptables.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/disable_ipv6.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/disable_selinux.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/disable_thp.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/install_lzo.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/install_nscd.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/install_ntp.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/install_tools.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/remove_tuned.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/tune_kernel.sh",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/sssd.conf",
+    "wget https://raw.githubusercontent.com/OmkarGaikwad21/Cloud/main/pre-req-files/nscd.conf",
    
     
     
