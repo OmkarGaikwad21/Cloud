@@ -73,7 +73,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   fi
   yum -y -e1 -d1 install ntp
   if is_virtual; then
-    tinker_ntp.conf
+    tinker_ntp_conf
   fi
   service ntpd start
   chkconfig ntpd on
@@ -81,7 +81,7 @@ elif [ "$OS" == Debian -o "$OS" == Ubuntu ]; then
   export DEBIAN_FRONTEND=noninteractive
   apt-get -y -q install ntp
   if is_virtual; then
-    tinker_ntp.conf
+    tinker_ntp_conf
   fi
   service ntp start
   update-rc.d ntp defaults
